@@ -1,5 +1,5 @@
 <?php
-    include "../db/db.php";
+    include "../common/ini.php";
 ?>
 
 <!DOCTYPE html>

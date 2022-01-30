@@ -1,5 +1,5 @@
 <?php
-    include 'db/db.php';
+    include 'common/ini.php';
 
     // カレンターの日付設定
     if(isset($_GET['serch'])) {
@@ -47,23 +47,24 @@
             <th>従業員名</th>
             <th>時刻</th>
         </tr>
-        
             <?php
             // ログ一覧取得処理
-            $query = $pdo->prepare('select user_name,datatime 
+            $query = $pdo->prepare('select user_name,datetime 
                                     from kintai as k 
                                     inner join user as u on k.user_id = u.id 
-                                    where k.datatime like ? order by datatime asc');
+                                    where k.datetime like ? order by datetime asc');
             $query->execute([$date.'%']);
             foreach($query->fetchAll() as $val){
-                // $bday = new DateTime($val['datatime']);
+                // $bday = new DateTime($val['datetime']);
                 // echo $bday->format('Y');
-                echo '<tr><td>'.$val['user_name'].'</td>';
-                echo '<td>'.$val['datatime'].'</td></tr>';
-                
+                $html = '';
+                $html .= '<tr>';
+                $html .= '<td>'.$val['user_name'].'</td>';
+                $html .= '<td>'.$val['datetime'].'</td>';
+                $html .= '</tr>';
+                echo $html;
             }
             ?>
-        
         </table>
         
     </body>
