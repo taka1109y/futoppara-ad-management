@@ -2,10 +2,10 @@
     include 'common/ini.php';
 
     // カレンターの日付設定
-    if(isset($_GET['serch'])) {
+    if(isset($_GET['serch'])) {//カレンダーにて日付選択した場合
         $selectDate = $_GET['selectDate'];
         $date = $selectDate;
-    }else{
+    }else{//遷移時及びパラメータリセット状態
         $date = new DateTime();
         $date = $date->format('Y-m-d');
     }
