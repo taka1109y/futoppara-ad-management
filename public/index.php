@@ -1,5 +1,5 @@
 <?php
-    include 'common/ini.php';
+    require_once('./common/ini.php');
 
     // カレンターの日付設定
     if(isset($_GET['serch'])) {//カレンダーにて日付選択した場合
@@ -9,6 +9,19 @@
         $date = new DateTime();
         $date = $date->format('Y-m-d');
     }
+
+    // DBへの接続
+    $dbh = new PDO($dsn,$user,$password);
+    $dbh->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+
+    // SQL文の発行及びレコードへの追加
+    $sql = 'select staff_name,datetime from kintai as k inner join staff as u on k.staff_id = u.id where k.datetime like ? order by datetime asc';
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute([$date.'%']);
+
+    // DB切断
+    $dbh = null;
+    
 ?>
 
 <!DOCTYPE html>
@@ -31,8 +44,8 @@
         </style>
     </head>
     <body>
-        <a href="user/user_add.php"><button>従業員登録</button></a>
-        <a href="user/user_all.php"><button>従業員一覧</button></a>
+        <a href="staff/staff_add.php"><button>従業員登録</button></a>
+        <a href="staff/staff_all.php"><button>従業員一覧</button></a>
 
         <p>ログ一覧</p>
 
@@ -48,24 +61,19 @@
             <th>時刻</th>
         </tr>
             <?php
-            // ログ一覧取得処理
-            $query = $pdo->prepare('select user_name,datetime 
-                                    from kintai as k 
-                                    inner join user as u on k.user_id = u.id 
-                                    where k.datetime like ? order by datetime asc');
-            $query->execute([$date.'%']);
-            foreach($query->fetchAll() as $val){
-                // $bday = new DateTime($val['datetime']);
-                // echo $bday->format('Y');
-                $html = '';
-                $html .= '<tr>';
-                $html .= '<td>'.$val['user_name'].'</td>';
-                $html .= '<td>'.$val['datetime'].'</td>';
-                $html .= '</tr>';
-                echo $html;
-            }
+                while(true){
+                    $rec = $stmt->fetch(PDO::FETCH_ASSOC);// $stmtから１レコード取り出し
+                    if($rec == false){
+                        break;
+                    }
+                    $html = '';
+                    $html .= '<tr>';
+                    $html .= '<td>'.$rec['staff_name'].'</td>';
+                    $html .= '<td>'.$rec['datetime'].'</td>';
+                    $html .= '</tr>';
+                    print $html;
+                }
             ?>
         </table>
-        
     </body>
 </html>

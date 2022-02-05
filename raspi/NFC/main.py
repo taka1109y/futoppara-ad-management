@@ -23,7 +23,7 @@ def dbFunction(number):
         cursor=db.cursor()
         cursor.execute("USE futoppara")
         db.commit()
-        sql=('INSERT INTO kintai(user_id, datetime) VALUES((SELECT user_id from card WHERE card_num = "'+ number +'"),"'+dt_now+'")')
+        sql=('INSERT INTO kintai(staff_id, datetime) VALUES((SELECT staff_id from card WHERE card_num = "'+ number +'"),"'+ dt_now + '")')
         cursor.execute(sql)
         db.commit()
         if cursor != None:# 登録成功時
